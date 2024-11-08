@@ -30,7 +30,7 @@ jobs:
         with:
           dotnet-version: '6.0.x'
       - name: Build Release
-        run: dotnet build src/YourProject.csproj --configuration Release
+        run: dotnet build UnitTestProject/UnitTestProject.csproj --configuration Release
       - name: Upload Release Artifacts
         uses: actions/upload-artifact@v4
         with:
