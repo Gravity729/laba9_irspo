@@ -1,5 +1,6 @@
 name: Parallel Workflow
-on: [pull_request]
+on: workflow_dispatch
+#on: [pull_request]
 jobs:
   build-debug:
     runs-on: ubuntu-latest
