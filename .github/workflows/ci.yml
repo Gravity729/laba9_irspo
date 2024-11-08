@@ -1,7 +1,7 @@
-name: Combined Workflow
-on: [push]
+name: Parallel Workflow
+on: [pull_request]
 jobs:
-  build:
+  build-debug:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -10,30 +10,28 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '6.0.x'
-      - name: Build project
-        run: dotnet build UnitTestProject/UnitTestProject.csproj
-        
-  test:
-    needs: build
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        configuration: [Debug, Release]
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v4
+      - name: Build Debug
+        run: dotnet build UnitTestProject/UnitTestProject.csproj --configuration Debug
+      - name: Upload Debug Artifacts
+        uses: actions/upload-artifact@v4
         with:
-          dotnet-version: '6.0.x'
-      - name: Run tests
-        run: dotnet test UnitTestProject/UnitTestProject.csproj --configuration ${{ matrix.configuration }}
+          name: debug-artifacts
+          path: output/Debug
 
-  analyze:
-    needs: build
+  build-release:
+
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-      - name: Run code analysis
-        run: dotnet tool install -g dotnet-format && dotnet format UnitTestProject/UnitTestProject.csproj
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '6.0.x'
+      - name: Build Release
+        run: dotnet build src/YourProject.csproj --configuration Release
+      - name: Upload Release Artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: release-artifacts
+          path: output/Release
